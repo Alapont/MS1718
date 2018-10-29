@@ -1,0 +1,82 @@
+package presentacion.vistas.vistaSeccion.seccion;
+
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import negocio.seccion.imp.TransferSeccion;
+import presentacion.ListaComandos;
+import presentacion.controlador.Controlador;
+
+public class JFrameAltaSeccion extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JTextField nombre;
+	private JTextField descripcion;
+	private JButton enviar;
+	private JButton salir;
+	
+	public JFrameAltaSeccion() {
+		Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		this.setTitle("Alta seccion");
+		this.setLayout(new FlowLayout());
+		this.setResizable(false);
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				cerrar();
+			}
+		});
+
+		JPanel buttonPanel = new JPanel(new GridLayout(4, 1));
+
+		nombre = new JTextField("Nombre");
+		descripcion = new JTextField("Descripcion");
+		enviar = new JButton("Enviar");
+		salir = new JButton("Volver");
+
+		nombre.setPreferredSize(new Dimension(320, 35));
+
+		enviar.addActionListener(new ActionListenerAltaCliente());
+
+		salir.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cerrar();
+			}
+		});
+
+		buttonPanel.add(nombre);
+		buttonPanel.add(descripcion);
+		buttonPanel.add(enviar);
+		buttonPanel.add(salir);
+		this.getContentPane().add(buttonPanel);
+		this.pack();
+		
+		Dimension ventana = this.getSize();
+		this.setLocation((pantalla.width-ventana.width) / 2, (pantalla.height-ventana.height) / 2);
+		this.setLocationRelativeTo(null);
+	    this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
+	}
+
+	public class ActionListenerAltaCliente implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			Controlador.getInstance().accion(ListaComandos.NEGOCIO_ALTA_SECCION, new TransferSeccion(nombre.getText(), descripcion.getText(), true));
+		}
+	}
+
+	public void cerrar() {
+		nombre.setText("Nombre");
+		descripcion.setText("Descripcion");
+		this.setVisible(false);
+		Controlador.getInstance().accion(ListaComandos.VENTANA_PRINCIPAL_SECCION, null);
+	}
+}
